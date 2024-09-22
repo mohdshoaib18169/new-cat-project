@@ -250,11 +250,9 @@ export const runAnimation = ({ selectedSpirit, codeElements, event }) => {
 
 export const runSingleCodeBlockAnimation = (codeBlock, selectedSpirit) => {
   let codeBlocks = [...codeBlock];
-  if (codeBlocks.length > 0) {
-    if (codeBlocks[0].type === StringToCodeMap.WHEN || codeBlocks[0].type === StringToCodeMap.WHENFLAG) {
-      codeBlocks.shift();
-    }
-  }
+ console.log(codeBlocks)
+ console.log(selectedSpirit)
+  
   const merged = getVerticalMergedCodeFunction(codeBlocks, 1, true);
   step(merged, selectedSpirit);
 }
