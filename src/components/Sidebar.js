@@ -1,7 +1,7 @@
 import React from "react";
-import { ComponentMapping, StringToCodeElementsMapping, allAcceptableItems, codeElements as allCodeElement } from "../constants";
-import DropZone from "./DropZone";
-import { onDragEnd } from "../constants/utils";
+import { ComponentMapping, StringToCodeMap, allAcceptableItems, codeElements as allCodeElement } from "../constants";
+import DropZone from "./DropArea";
+import { onDragEnd } from "../constants/functions";
 
 export default function Sidebar({ setDeleteCodeEnabled, deleteCodeEnabled, codeElements, setCodeElements, selectedSpirit }) {
   const handleDrop = (data, item) => {
@@ -14,15 +14,7 @@ export default function Sidebar({ setDeleteCodeEnabled, deleteCodeEnabled, codeE
     
     <div className="w-60 flex-none h-full overflow-y-auto flex mt-3 flex-col items-start p-2 border-r border-gray-200">
       {/* <Events /> */}
-      {deleteCodeEnabled ? <div className="flex flex-col w-full flex-1">
-        <div className="text-center" style={{ fontWeight: 'bold' }}>Trash</div>
-        <DropZone
-          className="flex-1 bg-red-400 trashDropZone"
-          acceptableDropItems={allAcceptableItems}
-          onDrop={(data, item) => handleDrop(data, item, 0)}
-        />
-      </div> :
-        <>
+  
           <div style={{}} className="py-4">
             {allCodeElement.MOTION.map((element, index) => {
               let codeElement = ComponentMapping[element]
@@ -56,8 +48,7 @@ export default function Sidebar({ setDeleteCodeEnabled, deleteCodeEnabled, codeE
           </div>
         
            
-        </>
-      }
+      
     </div>
     </div>
   );

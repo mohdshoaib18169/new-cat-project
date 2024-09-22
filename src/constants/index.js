@@ -1,28 +1,11 @@
 // import Motion from "../components/Motion"
 import React from "react"
-import Move from "../components/Move/Move"
+import Move from "../components/BasicMoveFunctions/Move"
 
-import DroppableCodeElement from "../components/DroppableCodeElement"
-
-
+import DropElement from "../components/DropElement"
 
 
-
-// export const codeConstants = {
-//   MOTION: {
-//     name: "Motion",
-//     component: <Motion key="MOTION" elements={MOTION_CONSTANTS} />
-//   }
-// }
-
-// const MOTION_CONSTANTS = [
-//   {
-//     name: "Move",
-//     component: 
-//   }
-// ]
-
-export const StringToCodeElementsMapping = {
+export const StringToCodeMap = {
   MOVE: "Move",
   default: "Default",
   CHANGEX: "Change-x",
@@ -35,21 +18,21 @@ export const StringToCodeElementsMapping = {
 
 
 export const ELEMENT_SPECIFIC_ID = {
-  MOVE: StringToCodeElementsMapping.MOVE,
-  REPEAT: StringToCodeElementsMapping.REPEAT,
-  CHANGEX: StringToCodeElementsMapping.CHANGEX,
-  CHANGEY: StringToCodeElementsMapping.CHANGEY,
-  ROTATEL: StringToCodeElementsMapping.ROTATEL,
-  ROTATER: StringToCodeElementsMapping.ROTATER,
+  MOVE: StringToCodeMap.MOVE,
+  REPEAT: StringToCodeMap.REPEAT,
+  CHANGEX: StringToCodeMap.CHANGEX,
+  CHANGEY: StringToCodeMap.CHANGEY,
+  ROTATEL: StringToCodeMap.ROTATEL,
+  ROTATER: StringToCodeMap.ROTATER,
 
 }
 export const acceptedDropableItems = [
-  StringToCodeElementsMapping.MOVE,
-  StringToCodeElementsMapping.CHANGEX,
-  StringToCodeElementsMapping.CHANGEY,
-  StringToCodeElementsMapping.REPEAT,
-  StringToCodeElementsMapping.ROTATEL,
-  StringToCodeElementsMapping.ROTATER,
+  StringToCodeMap.MOVE,
+  StringToCodeMap.CHANGEX,
+  StringToCodeMap.CHANGEY,
+  StringToCodeMap.REPEAT,
+  StringToCodeMap.ROTATEL,
+  StringToCodeMap.ROTATER,
 
 ]
 export const allAcceptableItems = [
@@ -57,22 +40,22 @@ export const allAcceptableItems = [
  
 ]
 export const complexDropableItems = [
-  StringToCodeElementsMapping.REPEAT,
+  StringToCodeMap.REPEAT,
  
 ]
 
 export const codeElements = {
   MOTION: [
-    StringToCodeElementsMapping.MOVE,
-    StringToCodeElementsMapping.CHANGEX,
-    StringToCodeElementsMapping.CHANGEY,
-    StringToCodeElementsMapping.ROTATER,
-    StringToCodeElementsMapping.ROTATEL,
+    StringToCodeMap.MOVE,
+    StringToCodeMap.CHANGEX,
+    StringToCodeMap.CHANGEY,
+    StringToCodeMap.ROTATER,
+    StringToCodeMap.ROTATEL,
   
     
   ],
   CONTROL: [
-    StringToCodeElementsMapping.REPEAT
+    StringToCodeMap.REPEAT
   ],
 
 }
@@ -83,46 +66,46 @@ export const applyTransformations = (target, value) => {
 }
 
 export const ComponentMapping = {
-  [StringToCodeElementsMapping.default]: {
+  [StringToCodeMap.default]: {
     valueX: 0,
     valueY: 0,
     rotateX: 0,
     repeat: 1,
   },
-  [StringToCodeElementsMapping.MOVE]: {
+  [StringToCodeMap.MOVE]: {
     primaryText: 'Move by x steps',
     type: ELEMENT_SPECIFIC_ID.MOVE,
     Component: Move,
     value: 10,
   },
-  [StringToCodeElementsMapping.CHANGEX]: {
+  [StringToCodeMap.CHANGEX]: {
     primaryText: "change x coordinate",
     type: ELEMENT_SPECIFIC_ID.CHANGEX,
     Component: Move,
     value: 10
   },
-  [StringToCodeElementsMapping.CHANGEY]: {
+  [StringToCodeMap.CHANGEY]: {
     primaryText: "change y coordinate",
     type: ELEMENT_SPECIFIC_ID.CHANGEY,
     Component: Move,
     value: 10
   },
-  [StringToCodeElementsMapping.ROTATEL]: {
+  [StringToCodeMap.ROTATEL]: {
     primaryText: "Turn by x degrees",
     type: ELEMENT_SPECIFIC_ID.ROTATEL,
     Component: Move,
     value: 10,
   },
-  [StringToCodeElementsMapping.ROTATER]: {
+  [StringToCodeMap.ROTATER]: {
     primaryText: "Turn by y degrees",
     type: ELEMENT_SPECIFIC_ID.ROTATER,
     Component: Move,
     value: 10,
   },
-  [StringToCodeElementsMapping.REPEAT]: {
+  [StringToCodeMap.REPEAT]: {
     primaryText: "Repeat x times",
     type: ELEMENT_SPECIFIC_ID.REPEAT,
-    Component: DroppableCodeElement,
+    Component: DropElement,
     value: 10,
     insideElements: []
   },

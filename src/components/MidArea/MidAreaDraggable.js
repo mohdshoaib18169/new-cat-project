@@ -1,7 +1,7 @@
 import React from 'react';
-import DropZone from '../DropZone';
-import { onDragEnd } from '../../constants/utils';
-import { StringToCodeElementsMapping, acceptedDropableItems, allAcceptableItems } from '../../constants';
+import DropZone from '../DropArea';
+import { onDragEnd } from '../../constants/functions';
+import { StringToCodeMap, acceptedDropableItems, allAcceptableItems } from '../../constants';
 import Run from './Run';
 
 export default function MidAreaDraggable({
@@ -28,9 +28,7 @@ export default function MidAreaDraggable({
   }
 
   let isConditionAdded = false;
-  if (codeElements[selectedSpirit][codeBlockKey].length > 0) {
-    isConditionAdded = codeElements[selectedSpirit][codeBlockKey][0].type === StringToCodeElementsMapping.WHEN
-  }
+  
   const anyElementAdded = codeElements[selectedSpirit][codeBlockKey].length > 0;
   return (
     <div className="m-4 min-h-40 w-full flex-none  flex flex-col p-2 bg-gray-100 rounded" key={codeBlockKey}>

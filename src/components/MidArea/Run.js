@@ -1,6 +1,6 @@
 import React from 'react';
-import { defaultTransforms, getMergedAnimations, getMergedCodeElementsVertically, getTransformValue, runAnimation, runSingleCodeBlockAnimation } from '../../constants/utils';
-import { StringToCodeElementsMapping, applyTransformations } from '../../constants';
+import {  runAnimation, runSingleCodeBlockAnimation } from '../../constants/functions';
+import { StringToCodeMap, applyTransformations } from '../../constants';
 import IconFlag from '../Event/IconFlag';
 
 function easeLinear(t, b, c, d) {
@@ -39,7 +39,7 @@ export default function Run({
       runSingleCodeBlockAnimation(codeBlock, selectedSpirit);
       return;
     } else {
-      runAnimation({ selectedSpirit, codeElements, event: StringToCodeElementsMapping.WHENFLAG })
+      runAnimation({ selectedSpirit, codeElements, event: StringToCodeMap.WHENFLAG })
     }
   }
 

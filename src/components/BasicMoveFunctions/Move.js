@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDrag } from "react-dnd";
-import { StringToCodeElementsMapping } from '../../constants';
-import DropZone from '../DropZone';
+import { StringToCodeMap } from '../../constants';
+import DropZone from '../DropArea';
 
-export default function Move({ setDeleteCodeEnabled, draggableId = StringToCodeElementsMapping.MOVE, index = 1, className = "", updateValue, value, isDisabled = false, PrimaryText, secondaryText = null, onDrop, codeBlockKey, acceptableDropItems, }) {
+export default function Move({ setDeleteCodeEnabled, draggableId = StringToCodeMap.MOVE, index = 1, className = "", updateValue, value, isDisabled = false, PrimaryText, secondaryText = null, onDrop, codeBlockKey, acceptableDropItems, }) {
   // const [steps, setSteps] = useState(10);
   const [{ opacity, isDragging }, drag] = useDrag({
-    type: StringToCodeElementsMapping.MOVE,
+    type: StringToCodeMap.MOVE,
     item: {
       id: draggableId,
     },

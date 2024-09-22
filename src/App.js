@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./components/Sidebar";
 import MidArea from "./components/MidArea/MidArea";
 import PreviewArea from "./components/PreviewArea";
-import { runAnimation } from "./constants/utils";
+import { runAnimation } from "./constants/functions";
 
 export default function App() {
   const [codeElements, setCodeElements] = useState({
