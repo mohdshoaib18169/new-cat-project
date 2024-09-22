@@ -1,32 +1,64 @@
 import React from "react";
-import Icon from "./Icon";
+import { ComponentMapping, StringToCodeElementsMapping, allAcceptableItems, codeElements as allCodeElement } from "../constants";
+import DropZone from "./DropZone";
+import { onDragEnd } from "../constants/utils";
 
-export default function Sidebar() {
+export default function Sidebar({ setDeleteCodeEnabled, deleteCodeEnabled, codeElements, setCodeElements, selectedSpirit }) {
+  const handleDrop = (data, item) => {
+    setDeleteCodeEnabled(false);
+    onDragEnd({ draggableId: item.id, codeElements, setCodeElements, selectedSpirit, isRemove: true })
+  }
   return (
-    <div className="w-60 flex-none h-full overflow-y-auto flex flex-col items-start p-2 border-r border-gray-200">
-      <div className="font-bold"> {"Events"} </div>
-      <div className="flex flex-row flex-wrap bg-yellow-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"When "}
-        <Icon name="flag" size={15} className="text-green-600 mx-2" />
-        {"clicked"}
-      </div>
-      <div className="flex flex-row flex-wrap bg-yellow-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"When this sprite clicked"}
-      </div>
-      <div className="font-bold"> {"Motion"} </div>
-      <div className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"Move 10 steps"}
-      </div>
-      <div className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"Turn "}
-        <Icon name="undo" size={15} className="text-white mx-2" />
-        {"15 degrees"}
-      </div>
-      <div className="flex flex-row flex-wrap bg-blue-500 text-white px-2 py-1 my-2 text-sm cursor-pointer">
-        {"Turn "}
-        <Icon name="redo" size={15} className="text-white mx-2" />
-        {"15 degrees"}
-      </div>
+    <div>
+<div className = "ml-2 mt-2"> CODE</div>
+    
+    <div className="w-60 flex-none h-full overflow-y-auto flex mt-3 flex-col items-start p-2 border-r border-gray-200">
+      {/* <Events /> */}
+      {deleteCodeEnabled ? <div className="flex flex-col w-full flex-1">
+        <div className="text-center" style={{ fontWeight: 'bold' }}>Trash</div>
+        <DropZone
+          className="flex-1 bg-red-400 trashDropZone"
+          acceptableDropItems={allAcceptableItems}
+          onDrop={(data, item) => handleDrop(data, item, 0)}
+        />
+      </div> :
+        <>
+          <div style={{}} className="py-4">
+            {allCodeElement.MOTION.map((element, index) => {
+              let codeElement = ComponentMapping[element]
+              let Component = codeElement.Component;
+              return (
+                <Component
+                  PrimaryText={codeElement.primaryText}
+                  secondaryText={codeElement.secondaryText}
+                  draggableId={element}
+                  type={element.type}
+                  index={index}
+                  isDisabled />
+              )
+            })}
+          </div>
+          <div style={{}} className="">
+            {allCodeElement.CONTROL.map((element, index) => {
+              let codeElement = ComponentMapping[element];
+              let Component = codeElement.Component;
+              return (
+                <Component
+                  droppableId={element}
+                  draggableId={element}
+                  index={index}
+                  isDisabled
+                  PrimaryText={codeElement.primaryText}
+                  type={codeElement.type}
+                />
+              )
+            })}
+          </div>
+        
+           
+        </>
+      }
+    </div>
     </div>
   );
 }

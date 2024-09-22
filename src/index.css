@@ -1,0 +1,20 @@
+.dropZone.active{
+  background: #54626F60;
+  transition: 100ms all;
+  min-height: 20px;
+}
+.trashDropZone.active {
+  background: red;
+  transition: 100ms all;
+  min-height: 20px;
+}
+.hidden {
+  display: none
+}
+body{
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.font-size-12 {
+  font-size: 12px;
+}
