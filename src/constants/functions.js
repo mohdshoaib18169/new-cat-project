@@ -42,7 +42,6 @@ export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRep
       i++;
       continue;
     }
-
     if (!transformProperties.includes(code.type)) {
       if (valueX !== 0 || valueY !== 0 || rotateX !== 0)
         mergedVertical.push(merged);
@@ -50,11 +49,7 @@ export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRep
       valueX = 0;
       valueY = 0;
       rotateX = 0;
-      if (codeConstant.LOOK.includes(code.type)) {
-        merged = { ...ComponentMapping[StringToCodeMap.default] };
-     
-        mergedVertical.push(merged);
-      } else if (complexDropableItems.includes(code.type)) {
+   if (complexDropableItems.includes(code.type)) {
         merged = getVerticalMergedCodeFunction(code.insideElements, code.value, true)[0];
         merged.repeat = code.value;
         mergedVertical.push(merged);
@@ -240,7 +235,7 @@ export const step = (mergedItems, selectedSpirit) => {
 export const runAnimation = ({ selectedSpirit, codeElements, event }) => {
   let mergedItems = {};
   for (let codeBlock in codeElements) {
-    let merged = getMergedAnimations(codeElements[codeBlock], event);
+    let merged = getMergedAnimationFunction(codeElements[codeBlock], event);
     mergedItems[codeBlock] = merged;
   }
   for (let mergedSpirit in mergedItems) {
