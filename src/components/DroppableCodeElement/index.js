@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 import { acceptedDropableItems, complexDropableItems, transformProperties } from '../../constants';
 import { useDrag } from 'react-dnd';
-import DropZone from '../DropArea';
+import DropZone from '../DropZone';
 
-export default function DropElement({ setDeleteCodeEnabled, value, isDisabled = false, selectedSpirit, setCodeElements, codeElements, type, droppableId, primaryText, insideElements, draggableId, onDrop, codeBlockKey, set, index, updateValue }) {
+export default function DroppableCodeElement({ setDeleteCodeEnabled, value, isDisabled = false, selectedSpirit, setCodeElements, codeElements, type, droppableId, primaryText, insideElements, draggableId, onDrop, codeBlockKey, set, index, updateValue }) {
   const [{ opacity, isDragging }, drag] = useDrag({
     type: type,
     item: {
