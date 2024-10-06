@@ -1,6 +1,7 @@
 import React from "react";
 import MidAreaDraggable from "./MidAreaDraggable";
 import IconFlag from "../Event/IconFlag";
+import Run from './Run';
 
 export default function MidArea({ setCodeElements, codeElements, selectedSpirit, setDeleteCodeEnabled }) {
   const handleNewCodeBlock = () => {
@@ -13,7 +14,7 @@ export default function MidArea({ setCodeElements, codeElements, selectedSpirit,
 
   const spiritCodeElements = codeElements[selectedSpirit];
   return <div className="flex-col flex-1 h-full flex overflow-auto">
-    <div className="flex py-2 border-b">
+    <div className="flex py-2 border-b justify-between">
       <div className="flex items-center">
         <div className = "flex flex-row">
         <div className = "ml-4">ACTIONS</div>
@@ -21,6 +22,12 @@ export default function MidArea({ setCodeElements, codeElements, selectedSpirit,
         </div>
       </div>
 
+      <div className="flex justify-end py-2 pr-6 ">
+      <div className="flex items-center">
+        <Run selectedSpirit={selectedSpirit} codeElements={codeElements} />
+      </div>
+
+    </div>
     </div>
     <div className="flex overflow-auto flex-1 w-full">
       {

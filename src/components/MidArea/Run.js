@@ -45,11 +45,9 @@ export default function Run({
 
   return (
     <button className={`text-white ${runPlayButton ? null : 'mx-4'}`} onClick={onRunClick}>
-      {runPlayButton ? (
+     
         <PlayIcon />
-      ) : (
-        <IconFlag />
-      )}
+     
     </button>
   )
 }

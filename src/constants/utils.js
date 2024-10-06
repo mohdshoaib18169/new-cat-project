@@ -1,5 +1,5 @@
 import { cloneDeep } from "lodash";
-import { ComponentMapping, ELEMENT_SPECIFIC_ID, StringToCodeMap, complexDropableItems, transformProperties, codeElements as codeConstant } from ".";
+import { ComponentMapping, ELEMENT_SPECIFIC_ID, StringToCodeElementsMapping, complexDropableItems, transformProperties, codeElements as codeConstant } from ".";
 
 export const defaultTransforms = {
   translateX: 0,
@@ -16,12 +16,12 @@ export const defaultTransforms = {
   perspective: 0,
 }
 
-export const removeCodeFunction = (affectedCodeBlock, index) => {
+export const removeCodeElement = (affectedCodeBlock, index) => {
   affectedCodeBlock.splice(index, 1);
   return affectedCodeBlock;
 }
 
-export const moveCodeFunction = (affectedCodeBlock, type, destination, value, movedElement) => {
+export const moveCodeElement = (affectedCodeBlock, type, destination, value, movedElement) => {
   let element = cloneDeep(ComponentMapping[type]);
   // element.value = value;
   element['draggableId'] = type;
@@ -29,15 +29,20 @@ export const moveCodeFunction = (affectedCodeBlock, type, destination, value, mo
   return affectedCodeBlock;
 }
 
-export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRepeat = false) => {
+export const getMergedCodeElementsVertically = (codeElements, multipler = 1, isRepeat = false) => {
   let mergedVertical = [];
-  let merged = { ...ComponentMapping[StringToCodeMap.default] };
+  let merged = { ...ComponentMapping[StringToCodeElementsMapping.default] };
   let valueX = 0;
   let valueY = 0;
   let rotateX = 0;
   let lastPush = true;
   let i = 0;
   for (let code of codeElements) {
+    // if (i === 0 && !isRepeat) {
+    //   i++;
+    //   continue;
+    // }
+
     if (!transformProperties.includes(code.type)) {
       if (valueX !== 0 || valueY !== 0 || rotateX !== 0)
         mergedVertical.push(merged);
@@ -45,12 +50,17 @@ export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRep
       valueX = 0;
       valueY = 0;
       rotateX = 0;
-   if (complexDropableItems.includes(code.type)) {
-        merged = getVerticalMergedCodeFunction(code.insideElements, code.value, true)[0];
+      if (codeConstant.LOOK.includes(code.type)) {
+        merged = { ...ComponentMapping[StringToCodeElementsMapping.default] };
+        if (code.type === ELEMENT_SPECIFIC_ID.SAY) merged.say = code.value;
+        if (code.type === ELEMENT_SPECIFIC_ID.THINK) merged.think = code.value;
+        mergedVertical.push(merged);
+      } else if (complexDropableItems.includes(code.type)) {
+        merged = getMergedCodeElementsVertically(code.insideElements, code.value, true)[0];
         merged.repeat = code.value;
         mergedVertical.push(merged);
       }
-      merged = { ...ComponentMapping[StringToCodeMap.default] };
+      merged = { ...ComponentMapping[StringToCodeElementsMapping.default] };
     } else {
       lastPush = true;
       if (code.type === ELEMENT_SPECIFIC_ID.CHANGEX) valueX += Number(code.value);
@@ -74,34 +84,36 @@ export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRep
   return mergedVertical;
 }
 
-const getHorizontalMergedCodeFunction = (codeBlocks) => {
+const getMergedCodeElementsHorizontally = (codeBlocks) => {
   let mergedHorizontal = [];
   let maximumLengthCode = 0;
   for (let codeBlock in codeBlocks) {
     maximumLengthCode = Math.max(codeBlocks[codeBlock].length, maximumLengthCode);
   }
   for (let i = 0; i < maximumLengthCode; i++) {
-    let merged = { ...ComponentMapping[StringToCodeMap.default] };
+    let merged = { ...ComponentMapping[StringToCodeElementsMapping.default] };
     for (let codeBlock in codeBlocks) {
       let code = codeBlocks[codeBlock];
       if (code.length > i) {
         merged.valueX += code[i].valueX;
         merged.valueY += code[i].valueY;
         merged.rotateX += code[i].rotateX;
+        merged.say = code[i].say.length > 0 ? code[i].say : merged.say;
+        merged.think = code[i].think.length > 0 ? code[i].think : merged.think;
       }
     }
     mergedHorizontal.push(merged);
   }
   return mergedHorizontal;
 }
-export const getMergedAnimationFunction = (codeBlocks, event) => {
+export const getMergedAnimations = (codeBlocks, event) => {
   const mergedCodeElementVertically = {};
   for (let codeBlock in codeBlocks) {
     if (codeBlocks[codeBlock].length > 0 ) {
-      mergedCodeElementVertically[codeBlock] = getVerticalMergedCodeFunction(codeBlocks[codeBlock]);
+      mergedCodeElementVertically[codeBlock] = getMergedCodeElementsVertically(codeBlocks[codeBlock]);
     }
   }
-  return getHorizontalMergedCodeFunction(mergedCodeElementVertically);
+  return getMergedCodeElementsHorizontally(mergedCodeElementVertically);
 }
 
 function getCurrentRotation(el) {
@@ -135,7 +147,7 @@ export const handleDropInComplexItems = ({ destination, draggableId, codeElement
     const [codeBlock, index, type] = destination.droppableId.split('+');
 
     let affectedCodeBlock = { ...codeElements[selectedSpirit][codeBlock][index] };
-    affectedCodeBlock.insideElements = [...moveCodeFunction(affectedCodeBlock.insideElements, draggableId, destination)];
+    affectedCodeBlock.insideElements = [...moveCodeElement(affectedCodeBlock.insideElements, draggableId, destination)];
     newCodeElements[selectedSpirit][codeBlock][index] = { ...affectedCodeBlock };
     setCodeElements(newCodeElements);
   }
@@ -147,10 +159,10 @@ const removeCodeElementHelper = ({ draggableId, codeElements, selectedSpirit, co
   if (draggableId.split('+').length > 3) {
     let elements = draggableId.split("+");
     movedElement = affectedCodeBlock[elements[1]].insideElements[elements[3]]
-    affectedCodeBlock[elements[1]].insideElements = removeCodeFunction(affectedCodeBlock[elements[1]].insideElements, elements[3]);
+    affectedCodeBlock[elements[1]].insideElements = removeCodeElement(affectedCodeBlock[elements[1]].insideElements, elements[3]);
   } else {
     movedElement = affectedCodeBlock[index];
-    affectedCodeBlock = removeCodeFunction(affectedCodeBlock, index);
+    affectedCodeBlock = removeCodeElement(affectedCodeBlock, index);
   }
   return [affectedCodeBlock, movedElement];
 }
@@ -160,10 +172,10 @@ const copyCodeElementHelper = ({ codeElements, selectedSpirit, destination, move
   let affectedCodeBlock = [...codeElements[selectedSpirit][elements[0]]];
   elements[1] -= negateFromIndex;
   if (destination.droppableId.split('+').length > 1) {
-    affectedCodeBlock[elements[1]].insideElements = moveCodeFunction(affectedCodeBlock[elements[1]].insideElements, type, destination, value, movedElement);
+    affectedCodeBlock[elements[1]].insideElements = moveCodeElement(affectedCodeBlock[elements[1]].insideElements, type, destination, value, movedElement);
     codeElements[selectedSpirit][elements[0]] = affectedCodeBlock;
   } else {
-    affectedCodeBlock = moveCodeFunction(affectedCodeBlock, type, destination, value, movedElement);
+    affectedCodeBlock = moveCodeElement(affectedCodeBlock, type, destination, value, movedElement);
     codeElements[selectedSpirit][elements[0]] = affectedCodeBlock;
   }
   return codeElements
@@ -195,7 +207,7 @@ export const onDragEnd = ({ destination, draggableId, codeElements, setCodeEleme
     let affectedCodeBlock = newCodeElements[selectedSpirit][codeBlock];
     if (destination === null) {
       // remove code element
-      affectedCodeBlock = removeCodeFunction(affectedCodeBlock, index);
+      affectedCodeBlock = removeCodeElement(affectedCodeBlock, index);
       setCodeElements(newCodeElements);
     } else {
       let movedElement = {};
@@ -213,7 +225,7 @@ export const onDragEnd = ({ destination, draggableId, codeElements, setCodeEleme
       handleDropInComplexItems({ destination, draggableId, codeElements, setCodeElements, selectedSpirit })
     } else {
       let affectedCodeBlock = codeElements[selectedSpirit][destination.droppableId];
-      affectedCodeBlock = moveCodeFunction(affectedCodeBlock, draggableId, destination, 10);
+      affectedCodeBlock = moveCodeElement(affectedCodeBlock, draggableId, destination, 10);
       newCodeElements[selectedSpirit][destination.droppableId] = affectedCodeBlock;
       setCodeElements(newCodeElements);
     }
@@ -224,6 +236,19 @@ export const step = (mergedItems, selectedSpirit) => {
   let i = 0;
   for (let codeElement of mergedItems) {
     gsap.to(`#${selectedSpirit}`, { duration: 1, x: "+=" + codeElement.valueX, y: "+=" + codeElement.valueY, rotation: "+=" + codeElement.rotateX, delay: i })
+    if (codeElement.say.length > 0 || codeElement.think.length > 0) {
+      if (codeElement.say.length > 0) {
+        document.getElementById(`${selectedSpirit}-say-message`).innerText = codeElement.say
+        gsap.timeline().to(`#${selectedSpirit}-say`, { opacity: 1, display: "block", delay: i + 0.2, duration: 0.01 })
+          .to({}, { duration: 0.8 })
+          .to(`#${selectedSpirit}-say`, { opacity: 0, display: "none", duration: 0.01 });
+      } else {
+        document.getElementById(`${selectedSpirit}-think-message`).innerText = codeElement.think
+        gsap.timeline().to(`#${selectedSpirit}-think`, { opacity: 1, display: "block", delay: i + 0.2, duration: 0.01 })
+          .to({}, { duration: 0.8 })
+          .to(`#${selectedSpirit}-think`, { opacity: 0, display: "none", duration: 0.01 });
+      }
+    }
     i++;
   }
 }
@@ -231,7 +256,7 @@ export const step = (mergedItems, selectedSpirit) => {
 export const runAnimation = ({ selectedSpirit, codeElements, event }) => {
   let mergedItems = {};
   for (let codeBlock in codeElements) {
-    let merged = getMergedAnimationFunction(codeElements[codeBlock], event);
+    let merged = getMergedAnimations(codeElements[codeBlock], event);
     mergedItems[codeBlock] = merged;
   }
   for (let mergedSpirit in mergedItems) {
@@ -241,9 +266,11 @@ export const runAnimation = ({ selectedSpirit, codeElements, event }) => {
 
 export const runSingleCodeBlockAnimation = (codeBlock, selectedSpirit) => {
   let codeBlocks = [...codeBlock];
- console.log(codeBlocks)
- console.log(selectedSpirit)
-  
-  const merged = getVerticalMergedCodeFunction(codeBlocks, 1, true);
+  if (codeBlocks.length > 0) {
+    if (codeBlocks[0].type === StringToCodeElementsMapping.WHEN || codeBlocks[0].type === StringToCodeElementsMapping.WHENFLAG) {
+      codeBlocks.shift();
+    }
+  }
+  const merged = getMergedCodeElementsVertically(codeBlocks, 1, true);
   step(merged, selectedSpirit);
 }
