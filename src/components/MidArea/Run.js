@@ -32,14 +32,15 @@ export default function Run({
   selectedSpirit,
   codeBlock,
   runPlayButton,
+  playClicked
 }) {
 
   const onRunClick = () => {
     if (runPlayButton) {
-      runSingleCodeBlockAnimation(codeBlock, selectedSpirit);
+      runSingleCodeBlockAnimation(codeBlock, selectedSpirit, playClicked);
       return;
     } else {
-      runAnimation({ selectedSpirit, codeElements, event: StringToCodeMap.WHENFLAG })
+      runAnimation({ selectedSpirit, codeElements, event: StringToCodeMap.WHENFLAG, playClicked })
     }
   }
 

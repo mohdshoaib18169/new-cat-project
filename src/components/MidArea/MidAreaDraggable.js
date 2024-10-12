@@ -34,7 +34,7 @@ export default function MidAreaDraggable({
     <div className="m-4 min-h-40 w-full flex-none  flex flex-col p-2 bg-gray-100 rounded" key={codeBlockKey}>
       <span className='font-medium flex w-full justify-between'>
         {"Actions for Selected Spirit"}
-        <div className = "mr-12"><Run codeBlock={codeBlock} runPlayButton={true} selectedSpirit={selectedSpirit} /> </div>
+        <div className = "mr-12"><Run codeBlock={codeBlock} runPlayButton={true} selectedSpirit={selectedSpirit} playClicked={true}/> </div>
       </span>
       {!isConditionAdded &&
         <DropZone data={codeBlockKey} acceptableDropItems={!isConditionAdded ? allAcceptableItems : acceptedDropableItems} onDrop={(data, item) => handleDrop(data, item, 0)} className={anyElementAdded ? 'h-1' : `flex-1`} />

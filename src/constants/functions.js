@@ -29,7 +29,8 @@ export const moveCodeFunction = (affectedCodeBlock, type, destination, value, mo
   return affectedCodeBlock;
 }
 
-export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRepeat = false) => {
+export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRepeat = false, playClicked) => {
+  if (playClicked) {
   let mergedVertical = [];
   let merged = { ...ComponentMapping[StringToCodeMap.default] };
   let valueX = 0;
@@ -73,6 +74,7 @@ export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRep
     mergedVertical.push(merged);
   return mergedVertical;
 }
+}
 
 const getHorizontalMergedCodeFunction = (codeBlocks) => {
   let mergedHorizontal = [];
@@ -94,11 +96,11 @@ const getHorizontalMergedCodeFunction = (codeBlocks) => {
   }
   return mergedHorizontal;
 }
-export const getMergedAnimationFunction = (codeBlocks, event) => {
+export const getMergedAnimationFunction = (codeBlocks, event, playClicked) => {
   const mergedCodeElementVertically = {};
   for (let codeBlock in codeBlocks) {
     if (codeBlocks[codeBlock].length > 0 ) {
-      mergedCodeElementVertically[codeBlock] = getVerticalMergedCodeFunction(codeBlocks[codeBlock]);
+      mergedCodeElementVertically[codeBlock] = getVerticalMergedCodeFunction(codeBlocks[codeBlock],undefined, undefined, playClicked);
     }
   }
   return getHorizontalMergedCodeFunction(mergedCodeElementVertically);
@@ -228,22 +230,22 @@ export const step = (mergedItems, selectedSpirit) => {
   }
 }
 
-export const runAnimation = ({ selectedSpirit, codeElements, event }) => {
+export const runAnimation = ({ selectedSpirit, codeElements, event, playClicked }) => {
+  if (playClicked) {
   let mergedItems = {};
   for (let codeBlock in codeElements) {
-    let merged = getMergedAnimationFunction(codeElements[codeBlock], event);
+    let merged = getMergedAnimationFunction(codeElements[codeBlock], event, playClicked);
     mergedItems[codeBlock] = merged;
   }
   for (let mergedSpirit in mergedItems) {
     step(mergedItems[mergedSpirit], mergedSpirit);
   }
 }
+}
 
-export const runSingleCodeBlockAnimation = (codeBlock, selectedSpirit) => {
+export const runSingleCodeBlockAnimation = (codeBlock, selectedSpirit, playClicked) => {
   let codeBlocks = [...codeBlock];
- console.log(codeBlocks)
- console.log(selectedSpirit)
   
-  const merged = getVerticalMergedCodeFunction(codeBlocks, 1, true);
+  const merged = getVerticalMergedCodeFunction(codeBlocks, 1, true, playClicked);
   step(merged, selectedSpirit);
 }

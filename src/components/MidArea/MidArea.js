@@ -24,7 +24,7 @@ export default function MidArea({ setCodeElements, codeElements, selectedSpirit,
 
       <div className="flex justify-end py-2 pr-6 ">
       <div className="flex items-center">
-        <Run selectedSpirit={selectedSpirit} codeElements={codeElements} />
+        <Run selectedSpirit={selectedSpirit} codeElements={codeElements} playClicked = {true}  />
       </div>
 
     </div>
