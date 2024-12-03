@@ -32,7 +32,8 @@ export default function Run({
   selectedSpirit,
   codeBlock,
   runPlayButton,
-  playClicked
+  playClicked,
+  setCodeElements
 }) {
 
   const onRunClick = () => {
@@ -40,7 +41,7 @@ export default function Run({
       runSingleCodeBlockAnimation(codeBlock, selectedSpirit, playClicked);
       return;
     } else {
-      runAnimation({ selectedSpirit, codeElements, event: StringToCodeMap.WHENFLAG, playClicked })
+      runAnimation({ selectedSpirit, codeElements, event: StringToCodeMap.WHENFLAG, playClicked , setCodeElements})
     }
   }
 

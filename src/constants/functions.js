@@ -47,7 +47,7 @@ export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRep
       valueY = 0;
       rotateX = 0;
    if (complexDropableItems.includes(code.type)) {
-        merged = getVerticalMergedCodeFunction(code.insideElements, code.value, true)[0];
+        merged = getVerticalMergedCodeFunction(code.insideElements, code.value, true, true)[0];
         merged.repeat = code.value;
         mergedVertical.push(merged);
       }
@@ -222,15 +222,59 @@ export const onDragEnd = ({ destination, draggableId, codeElements, setCodeEleme
   }
 }
 
-export const step = (mergedItems, selectedSpirit) => {
+const swapProperties = (obj1, obj2, codeElements, setCodeElements) => {
+   gsap.killTweensOf(`#Spirit0`);
+   gsap.killTweensOf(`#Spirit1`);
+   let val = codeElements
+   let temp = val["Spirit0"]
+   val["Spirit0"] = val["Spirit1"]
+   val["Spirit1"] = temp
+  gsap.to(`#Spirit0`, { duration: 1, x: "+=" + obj2.valueX, y: "+=" + obj2.valueY });
+  gsap.to(`#Spirit1`, { duration: 1, x: "+=" + obj1.valueX, y: "+=" + obj1.valueY });
+};
+
+const checkCollision = (id1, id2) => {
+  console.log(id1, id2)
+  if(id1 == id2)
+    return false
+  const el1 = document.getElementById(id1);
+  const el2 = document.getElementById(id2);
+  if (!el1 || !el2) return false;
+
+
+  const rect1 = el1.getBoundingClientRect();
+  const rect2 = el2.getBoundingClientRect();
+
+   
+  const hasCollisionOccurred = (
+    rect1.left < rect2.right &&
+    rect1.right > rect2.left &&
+    rect1.top < rect2.bottom &&
+    rect1.bottom > rect2.top
+);
+
+  return hasCollisionOccurred;
+  
+};
+
+
+export const step = (mergedItems, selectedSpirit, mergedItemsArray, codeElements, setCodeElements) => {
+
   let i = 0;
   for (let codeElement of mergedItems) {
-    gsap.to(`#${selectedSpirit}`, { duration: 1, x: "+=" + codeElement.valueX, y: "+=" + codeElement.valueY, rotation: "+=" + codeElement.rotateX, delay: i })
+    gsap.to(`#${selectedSpirit}`, { duration: 1, x: "+=" + codeElement.valueX, y: "+=" + codeElement.valueY, rotation: "+=" + codeElement.rotateX, onUpdate: () => {
+          if (checkCollision(selectedSpirit, `Spirit1`)) {
+            console.log("yes collide")
+            console.log(mergedItemsArray)
+            swapProperties(codeElement, mergedItemsArray["Spirit1"][0], codeElements, setCodeElements);
+          }
+      
+    }, delay: i })
     i++;
   }
 }
 
-export const runAnimation = ({ selectedSpirit, codeElements, event, playClicked }) => {
+export const runAnimation = ({ selectedSpirit, codeElements, event, playClicked, setCodeElements }) => {
   if (playClicked) {
   let mergedItems = {};
   for (let codeBlock in codeElements) {
@@ -238,7 +282,7 @@ export const runAnimation = ({ selectedSpirit, codeElements, event, playClicked 
     mergedItems[codeBlock] = merged;
   }
   for (let mergedSpirit in mergedItems) {
-    step(mergedItems[mergedSpirit], mergedSpirit);
+    step(mergedItems[mergedSpirit], mergedSpirit, mergedItems, codeElements, setCodeElements);
   }
 }
 }
