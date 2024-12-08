@@ -6,6 +6,8 @@ import DropElement from "../components/DropElement"
 
 
 export const StringToCodeMap = {
+  SETX: "Set-x",
+  SETY: "Set-y",
   MOVE: "Move",
   default: "Default",
   CHANGEX: "Change-x",
@@ -14,10 +16,13 @@ export const StringToCodeMap = {
   ROTATER: "Rotate-r",
   REPEAT: "Repeat",
 
+
 }
 
 
 export const ELEMENT_SPECIFIC_ID = {
+  SETX: StringToCodeMap.SETX,
+  SETY: StringToCodeMap.SETY,
   MOVE: StringToCodeMap.MOVE,
   REPEAT: StringToCodeMap.REPEAT,
   CHANGEX: StringToCodeMap.CHANGEX,
@@ -25,8 +30,11 @@ export const ELEMENT_SPECIFIC_ID = {
   ROTATEL: StringToCodeMap.ROTATEL,
   ROTATER: StringToCodeMap.ROTATER,
 
+
 }
 export const acceptedDropableItems = [
+  StringToCodeMap.SETX,
+  StringToCodeMap.SETY,
   StringToCodeMap.MOVE,
   StringToCodeMap.CHANGEX,
   StringToCodeMap.CHANGEY,
@@ -34,14 +42,15 @@ export const acceptedDropableItems = [
   StringToCodeMap.ROTATEL,
   StringToCodeMap.ROTATER,
 
+
 ]
 export const allAcceptableItems = [
   ...acceptedDropableItems,
- 
+
 ]
 export const complexDropableItems = [
   StringToCodeMap.REPEAT,
- 
+
 ]
 
 export const codeElements = {
@@ -51,8 +60,8 @@ export const codeElements = {
     StringToCodeMap.CHANGEY,
     StringToCodeMap.ROTATER,
     StringToCodeMap.ROTATEL,
-  
-    
+    StringToCodeMap.SETX,
+    StringToCodeMap.SETY,
   ],
   CONTROL: [
     StringToCodeMap.REPEAT
@@ -73,19 +82,31 @@ export const ComponentMapping = {
     repeat: 1,
   },
   [StringToCodeMap.MOVE]: {
-    primaryText: 'Move by x steps',
+    primaryText: 'Move x diagnally',
     type: ELEMENT_SPECIFIC_ID.MOVE,
     Component: Move,
     value: 10,
   },
+  [StringToCodeMap.SETX]: {
+    primaryText: 'Set x coordinate',
+    type: ELEMENT_SPECIFIC_ID.SETX,
+    Component: Move,
+    value: 10,
+  },
+  [StringToCodeMap.SETY]: {
+    primaryText: 'Set y coordinate',
+    type: ELEMENT_SPECIFIC_ID.SETY,
+    Component: Move,
+    value: 10,
+  },
   [StringToCodeMap.CHANGEX]: {
-    primaryText: "change x coordinate",
+    primaryText: "Move by x steps",
     type: ELEMENT_SPECIFIC_ID.CHANGEX,
     Component: Move,
     value: 10
   },
   [StringToCodeMap.CHANGEY]: {
-    primaryText: "change y coordinate",
+    primaryText: "Move by y steps",
     type: ELEMENT_SPECIFIC_ID.CHANGEY,
     Component: Move,
     value: 10
@@ -118,4 +139,6 @@ export const transformProperties = [
   ELEMENT_SPECIFIC_ID.CHANGEY,
   ELEMENT_SPECIFIC_ID.ROTATEL,
   ELEMENT_SPECIFIC_ID.ROTATER,
+  ELEMENT_SPECIFIC_ID.SETX,
+  ELEMENT_SPECIFIC_ID.SETY,
 ]

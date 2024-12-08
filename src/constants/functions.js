@@ -31,49 +31,58 @@ export const moveCodeFunction = (affectedCodeBlock, type, destination, value, mo
 
 export const getVerticalMergedCodeFunction = (codeElements, multipler = 1, isRepeat = false, playClicked) => {
   if (playClicked) {
-  let mergedVertical = [];
-  let merged = { ...ComponentMapping[StringToCodeMap.default] };
-  let valueX = 0;
-  let valueY = 0;
-  let rotateX = 0;
-  let lastPush = true;
-  let i = 0;
-  for (let code of codeElements) {
-    if (!transformProperties.includes(code.type)) {
-      if (valueX !== 0 || valueY !== 0 || rotateX !== 0)
-        mergedVertical.push(merged);
-      lastPush = false;
-      valueX = 0;
-      valueY = 0;
-      rotateX = 0;
-   if (complexDropableItems.includes(code.type)) {
-        merged = getVerticalMergedCodeFunction(code.insideElements, code.value, true, true)[0];
-        merged.repeat = code.value;
-        mergedVertical.push(merged);
+    let mergedVertical = [];
+    let merged = { ...ComponentMapping[StringToCodeMap.default] };
+    let valueX = 0;
+    let valueY = 0;
+    let rotateX = 0;
+    let setX = 0;
+    let setY = 0;
+    let lastPush = true;
+    let i = 0;
+    for (let code of codeElements) {
+      if (!transformProperties.includes(code.type)) {
+        if (valueX !== 0 || valueY !== 0 || rotateX !== 0)
+          mergedVertical.push(merged);
+        lastPush = false;
+        valueX = 0;
+        valueY = 0;
+        rotateX = 0;
+        setX = 0;
+        setY = 0;
+        if (complexDropableItems.includes(code.type)) {
+          merged = getVerticalMergedCodeFunction(code.insideElements, code.value, true, true)[0];
+          merged.repeat = code.value;
+          mergedVertical.push(merged);
+        }
+        merged = { ...ComponentMapping[StringToCodeMap.default] };
+      } else {
+        lastPush = true;
+        if (code.type === ELEMENT_SPECIFIC_ID.CHANGEX) valueX += Number(code.value);
+        if (code.type === ELEMENT_SPECIFIC_ID.CHANGEY) valueY += Number(code.value);
+        if (code.type === ELEMENT_SPECIFIC_ID.SETX) setX = Number(code.value);
+        if (code.type === ELEMENT_SPECIFIC_ID.SETY) setY = Number(code.value);
+        if (code.type === ELEMENT_SPECIFIC_ID.MOVE) {
+          valueX += Number(code.value);
+          valueY += Number(code.value);
+        }
+        if (code.type === ELEMENT_SPECIFIC_ID.ROTATEL) rotateX -= Number(code.value);
+        if (code.type === ELEMENT_SPECIFIC_ID.ROTATER) rotateX += Number(code.value);
+        merged.valueX = valueX;
+        merged.valueY = valueY;
+        merged.rotateX = rotateX;
+        merged.setX = setX;
+        merged.setY = setY;
       }
-      merged = { ...ComponentMapping[StringToCodeMap.default] };
-    } else {
-      lastPush = true;
-      if (code.type === ELEMENT_SPECIFIC_ID.CHANGEX) valueX += Number(code.value);
-      if (code.type === ELEMENT_SPECIFIC_ID.CHANGEY) valueY += Number(code.value);
-      if (code.type === ELEMENT_SPECIFIC_ID.MOVE) {
-        valueX += Number(code.value);
-        valueY += Number(code.value);
-      }
-      if (code.type === ELEMENT_SPECIFIC_ID.ROTATEL) rotateX -= Number(code.value);
-      if (code.type === ELEMENT_SPECIFIC_ID.ROTATER) rotateX += Number(code.value);
-      merged.valueX = valueX;
-      merged.valueY = valueY;
-      merged.rotateX = rotateX;
     }
+    merged.valueX *= multipler
+    merged.valueY *= multipler
+    merged.rotateX *= multipler
+    if (lastPush)
+      mergedVertical.push(merged);
+
+    return mergedVertical;
   }
-  merged.valueX *= multipler
-  merged.valueY *= multipler
-  merged.rotateX *= multipler
-  if (lastPush)
-    mergedVertical.push(merged);
-  return mergedVertical;
-}
 }
 
 const getHorizontalMergedCodeFunction = (codeBlocks) => {
@@ -90,6 +99,8 @@ const getHorizontalMergedCodeFunction = (codeBlocks) => {
         merged.valueX += code[i].valueX;
         merged.valueY += code[i].valueY;
         merged.rotateX += code[i].rotateX;
+        merged.setX = code[i].setX;
+        merged.setY = code[i].setY;
       }
     }
     mergedHorizontal.push(merged);
@@ -99,8 +110,8 @@ const getHorizontalMergedCodeFunction = (codeBlocks) => {
 export const getMergedAnimationFunction = (codeBlocks, event, playClicked) => {
   const mergedCodeElementVertically = {};
   for (let codeBlock in codeBlocks) {
-    if (codeBlocks[codeBlock].length > 0 ) {
-      mergedCodeElementVertically[codeBlock] = getVerticalMergedCodeFunction(codeBlocks[codeBlock],undefined, undefined, playClicked);
+    if (codeBlocks[codeBlock].length > 0) {
+      mergedCodeElementVertically[codeBlock] = getVerticalMergedCodeFunction(codeBlocks[codeBlock], undefined, undefined, playClicked);
     }
   }
   return getHorizontalMergedCodeFunction(mergedCodeElementVertically);
@@ -234,8 +245,8 @@ const swapProperties = (obj1, obj2, codeElements, setCodeElements) => {
 };
 
 const checkCollision = (id1, id2) => {
-  console.log(id1, id2)
-  if(id1 == id2)
+  // console.log(id1, id2)
+  if (id1 == id2)
     return false
   const el1 = document.getElementById(id1);
   const el2 = document.getElementById(id2);
@@ -245,51 +256,64 @@ const checkCollision = (id1, id2) => {
   const rect1 = el1.getBoundingClientRect();
   const rect2 = el2.getBoundingClientRect();
 
-   
+  //console.log("working0")
   const hasCollisionOccurred = (
     rect1.left < rect2.right &&
     rect1.right > rect2.left &&
     rect1.top < rect2.bottom &&
     rect1.bottom > rect2.top
-);
-
+  );
+  //console.log("working99")
+  //console.log(hasCollisionOccurred)
   return hasCollisionOccurred;
-  
+
 };
 
 
 export const step = (mergedItems, selectedSpirit, mergedItemsArray, codeElements, setCodeElements) => {
-
   let i = 0;
   for (let codeElement of mergedItems) {
-    gsap.to(`#${selectedSpirit}`, { duration: 1, x: "+=" + codeElement.valueX, y: "+=" + codeElement.valueY, rotation: "+=" + codeElement.rotateX, onUpdate: () => {
-          if (checkCollision(selectedSpirit, `Spirit1`)) {
-            console.log("yes collide")
-            console.log(mergedItemsArray)
-            swapProperties(codeElement, mergedItemsArray["Spirit1"][0], codeElements, setCodeElements);
-          }
-      
-    }, delay: i })
+    const xValue = codeElement.valueX === 0 && codeElement.setX !== 0 ? codeElement.setX : `+=${codeElement.valueX + codeElement.setX}`;
+    const yValue = codeElement.valueY === 0 && codeElement.setY !== 0 ? codeElement.setY : `+=${codeElement.valueY + codeElement.setY}`;
+    let oppositeSpirit = selectedSpirit == `Spirit1` ? `Spirit0` : `Spirit1`;
+    gsap.to(`#${selectedSpirit}`, {
+      duration: 1, x: xValue, y: yValue, rotation: "+=" + codeElement.rotateX, onUpdate: () => {
+        if (checkCollision(selectedSpirit, oppositeSpirit)) {
+          swapProperties(codeElement, mergedItemsArray[oppositeSpirit][0], codeElements, setCodeElements, mergedItemsArray);
+        }
+
+      }, delay: i
+    })
     i++;
   }
 }
 
 export const runAnimation = ({ selectedSpirit, codeElements, event, playClicked, setCodeElements }) => {
+ 
   if (playClicked) {
+    let mergedItems = {};
+    for (let codeBlock in codeElements) {
+      let merged = getMergedAnimationFunction(codeElements[codeBlock], event, playClicked);
+      mergedItems[codeBlock] = merged;
+    }
+   
+    for (let mergedSpirit in mergedItems) {
+      step(mergedItems[mergedSpirit], mergedSpirit, mergedItems, codeElements, setCodeElements);
+    }
+  }
+}
+
+export const runSingleCodeBlockAnimation = (codeBlock, selectedSpirit, playClicked, codeElements) => {
+  let codeBlocks = [...codeBlock];
+ 
   let mergedItems = {};
   for (let codeBlock in codeElements) {
     let merged = getMergedAnimationFunction(codeElements[codeBlock], event, playClicked);
     mergedItems[codeBlock] = merged;
   }
-  for (let mergedSpirit in mergedItems) {
-    step(mergedItems[mergedSpirit], mergedSpirit, mergedItems, codeElements, setCodeElements);
-  }
-}
-}
 
-export const runSingleCodeBlockAnimation = (codeBlock, selectedSpirit, playClicked) => {
-  let codeBlocks = [...codeBlock];
-  
+ 
   const merged = getVerticalMergedCodeFunction(codeBlocks, 1, true, playClicked);
-  step(merged, selectedSpirit);
+ 
+  step(merged, selectedSpirit, mergedItems, codeElements);
 }

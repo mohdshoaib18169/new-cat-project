@@ -109,7 +109,7 @@ const getMergedCodeElementsHorizontally = (codeBlocks) => {
 export const getMergedAnimations = (codeBlocks, event) => {
   const mergedCodeElementVertically = {};
   for (let codeBlock in codeBlocks) {
-    if (codeBlocks[codeBlock].length > 0 ) {
+    if (codeBlocks[codeBlock].length > 0) {
       mergedCodeElementVertically[codeBlock] = getMergedCodeElementsVertically(codeBlocks[codeBlock]);
     }
   }
